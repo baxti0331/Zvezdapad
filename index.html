@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheel of Fortune</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,33 +14,22 @@
         }
 
         body {
-            background: #1a1a2e;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 20px;
+            justify-content: center;
+            min-height: 100vh;
+            color: #fff;
         }
 
-        .header {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+        h1 {
+            margin-bottom: 20px;
+            font-size: 36px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .balance {
-            font-size: 24px;
-            color: #FFD700;
-        }
-
-        .wheel-container {
+        .container {
             position: relative;
             width: 400px;
             height: 400px;
@@ -49,270 +38,115 @@
         .wheel {
             width: 100%;
             height: 100%;
-            position: relative;
             border-radius: 50%;
-            border: 10px solid #FFD700;
+            border: 10px solid #ffd700;
+            background: conic-gradient(
+                #FFD700 0deg 45deg,
+                #FFA500 45deg 90deg,
+                #FF4500 90deg 135deg,
+                #FFD700 135deg 180deg,
+                #FFA500 180deg 225deg,
+                #FF4500 225deg 270deg,
+                #FFD700 270deg 315deg,
+                #FFA500 315deg 360deg
+            );
+            position: relative;
             transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            transform-origin: center;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            background: #2a2a4a;
+        }
+
+        .wheel:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            border: 5px solid #ffd700;
+            z-index: 10;
         }
 
         .pointer {
             position: absolute;
-            top: -20px;
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 40px;
-            background: #FFD700;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            z-index: 2;
-        }
-
-        .segment {
-            position: absolute;
-            width: 50%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.3);
-            left: 50%;
-            top: 50%;
-            transform-origin: left;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 40px;
-            color: white;
-            font-size: 16px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid #ff0000;
+            z-index: 20;
         }
 
         .button {
-            padding: 12px 30px;
+            margin-top: 30px;
+            padding: 15px 30px;
             font-size: 18px;
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            border: none;
-            border-radius: 25px;
-            color: #1a1a2e;
-            cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: bold;
-            text-transform: uppercase;
+            background: #ffd700;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .tasks {
-            width: 100%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .task {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            color: white;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 30px;
-            background: #FFD700;
-            border-radius: 10px;
-            color: #1a1a2e;
+        .result {
+            margin-top: 20px;
+            font-size: 22px;
             font-weight: bold;
-            transform: translateX(200%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="balance">Stars: <span id="balance">0</span> ⭐</div>
-        <button class="button" id="withdrawBtn">Withdraw</button>
-    </div>
-
-    <div class="wheel-container">
+    <h1>Wheel of Fortune</h1>
+    <div class="container">
         <div class="pointer"></div>
         <div class="wheel" id="wheel"></div>
     </div>
-
-    <button class="button" id="spinBtn">Spin (5 ⭐)</button>
-
-    <div class="tasks">
-        <h2 style="color: white; margin-bottom: 15px;">Daily Tasks</h2>
-        <div id="tasksList"></div>
-    </div>
-
-    <div class="notification" id="notification"></div>
+    <button class="button" id="spinButton">Spin the Wheel</button>
+    <div class="result" id="result"></div>
 
     <script>
-        class WheelOfFortune {
-            constructor() {
-                this.balance = 0;
-                this.prizes = [
-                    { value: '0.5 ⭐', probability: 0.3 },
-                    { value: '0.7 ⭐', probability: 0.25 },
-                    { value: '1.0 ⭐', probability: 0.2 },
-                    { value: '2.0 ⭐', probability: 0.15 },
-                    { value: 'Mystery Box', probability: 0.07 },
-                    { value: '5.0 ⭐', probability: 0.03 }
-                ];
-                this.isSpinning = false;
-                this.createWheel();
-                this.initTasks();
-                this.addEventListeners();
-            }
+        const wheel = document.getElementById("wheel");
+        const spinButton = document.getElementById("spinButton");
+        const result = document.getElementById("result");
+        let isSpinning = false;
 
-            createWheel() {
-                const wheel = document.getElementById('wheel');
-                const anglePerSegment = 360 / this.prizes.length;
-                
-                this.prizes.forEach((prize, index) => {
-                    const segment = document.createElement('div');
-                    segment.className = 'segment';
-                    segment.textContent = prize.value;
-                    segment.style.transform = `rotate(${anglePerSegment * index}deg)`;
-                    wheel.appendChild(segment);
-                });
-            }
+        const prizes = [
+            "⭐ 0.5 Star",
+            "⭐ 1 Star",
+            "⭐ 2 Stars",
+            "⭐ 5 Stars",
+            "⭐ Mystery Box",
+            "⭐ 0.7 Star",
+            "⭐ 3 Stars",
+            "⭐ 10 Stars"
+        ];
 
-            spin() {
-                if (this.isSpinning || this.balance < 5) return;
-                
-                this.isSpinning = true;
-                this.balance -= 5;
-                this.updateBalance();
+        spinButton.addEventListener("click", () => {
+            if (isSpinning) return;
+            isSpinning = true;
 
-                const wheel = document.getElementById('wheel');
-                const randomDegrees = this.getRandomPrizePosition();
-                const totalRotation = 3600 + randomDegrees;
+            const randomDegree = Math.floor(Math.random() * 360) + 3600; // Random degree + multiple full spins
+            const prizeIndex = Math.floor(((360 - (randomDegree % 360)) / 45) % prizes.length); // Calculate prize index
 
-                wheel.style.transform = `rotate(${totalRotation}deg)`;
+            wheel.style.transform = `rotate(${randomDegree}deg)`;
 
-                setTimeout(() => {
-                    this.isSpinning = false;
-                    this.awardPrize(randomDegrees);
-                }, 5000);
-            }
-
-            getRandomPrizePosition() {
-                const random = Math.random();
-                let probabilitySum = 0;
-                
-                for (let i = 0; i < this.prizes.length; i++) {
-                    probabilitySum += this.prizes[i].probability;
-                    if (random <= probabilitySum) {
-                        return (360 / this.prizes.length) * i;
-                    }
-                }
-                return 0;
-            }
-
-            awardPrize(degrees) {
-                const segmentIndex = Math.floor((360 - (degrees % 360)) / (360 / this.prizes.length));
-                const prize = this.prizes[segmentIndex];
-
-                if (prize.value === 'Mystery Box') {
-                    this.openMysteryBox();
-                } else {
-                    const amount = parseFloat(prize.value);
-                    this.balance += amount;
-                    this.updateBalance();
-                    this.showNotification(`You won ${prize.value}!`);
-                }
-            }
-
-            openMysteryBox() {
-                const prizes = [1, 2, 3, 5];
-                const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-                this.balance += randomPrize;
-                this.updateBalance();
-                this.showNotification(`Mystery Box: You won ${randomPrize} ⭐!`);
-            }
-
-            updateBalance() {
-                document.getElementById('balance').textContent = this.balance.toFixed(1);
-                document.getElementById('spinBtn').disabled = this.balance < 5;
-            }
-
-            showNotification(message) {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-
-            initTasks() {
-                const tasks = [
-                    'Visit our Telegram channel',
-                    'Follow us on Twitter',
-                    'Share with friends',
-                    'Rate us 5 stars'
-                ];
-
-                const tasksList = document.getElementById('tasksList');
-                tasks.forEach(task => {
-                    const taskElement = document.createElement('div');
-                    taskElement.className = 'task';
-                    taskElement.innerHTML = `
-                        <span>${task}</span>
-                        <button class="button" onclick="game.completeTask(this)">Complete</button>
-                    `;
-                    tasksList.appendChild(taskElement);
-                });
-            }
-
-            completeTask(button) {
-                button.disabled = true;
-                button.textContent = 'Completed';
-                this.balance += 5;
-                this.updateBalance();
-                this.showNotification('You earned 5 ⭐!');
-            }
-
-            withdraw() {
-                if (this.balance < 1) {
-                    this.showNotification('Minimum withdrawal amount is 1 ⭐');
-                    return;
-                }
-                this.showNotification(`Withdrawn ${this.balance} ⭐`);
-                this.balance = 0;
-                this.updateBalance();
-            }
-
-            addEventListeners() {
-                document.getElementById('spinBtn').addEventListener('click', () => this.spin());
-                document.getElementById('withdrawBtn').addEventListener('click', () => this.withdraw());
-            }
-        }
-
-        const game = new WheelOfFortune();
+            setTimeout(() => {
+                isSpinning = false;
+                result.textContent = `You won ${prizes[prizeIndex]}! 🎉`;
+            }, 5000); // Wait for the spin animation to complete
+        });
     </script>
 </body>
 </html>
