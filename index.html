@@ -1,152 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of Fortune</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1f1c2c, #928dab);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: #fff;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 36px;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .container {
-            position: relative;
-            width: 400px;
-            height: 400px;
-        }
-
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 10px solid #ffd700;
-            background: conic-gradient(
-                #FFD700 0deg 45deg,
-                #FFA500 45deg 90deg,
-                #FF4500 90deg 135deg,
-                #FFD700 135deg 180deg,
-                #FFA500 180deg 225deg,
-                #FF4500 225deg 270deg,
-                #FFD700 270deg 315deg,
-                #FFA500 315deg 360deg
-            );
-            position: relative;
-            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-        }
-
-        .wheel:after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: #fff;
-            border-radius: 50%;
-            border: 5px solid #ffd700;
-            z-index: 10;
-        }
-
-        .pointer {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 30px solid #ff0000;
-            z-index: 20;
-        }
-
-        .button {
-            margin-top: 30px;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            background: #ffd700;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .result {
-            margin-top: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Колесо Фортуны</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    
+    #wheel-container {
+      position: relative;
+      margin: 0 auto;
+      width: 300px;
+      height: 300px;
+    }
+    
+    #wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 5px solid #333;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0 0;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    
+    .segment span {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: rotate(90deg) translate(-50%, -50%);
+      white-space: nowrap;
+    }
+    
+    #spinButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <h1>Wheel of Fortune</h1>
-    <div class="container">
-        <div class="pointer"></div>
-        <div class="wheel" id="wheel"></div>
-    </div>
-    <button class="button" id="spinButton">Spin the Wheel</button>
-    <div class="result" id="result"></div>
 
-    <script>
-        const wheel = document.getElementById("wheel");
-        const spinButton = document.getElementById("spinButton");
-        const result = document.getElementById("result");
-        let isSpinning = false;
+<div id="wheel-container">
+  <div id="wheel"></div>
+</div>
+<button id="spinButton">Крутить</button>
 
-        const prizes = [
-            "⭐ 0.5 Star",
-            "⭐ 1 Star",
-            "⭐ 2 Stars",
-            "⭐ 5 Stars",
-            "⭐ Mystery Box",
-            "⭐ 0.7 Star",
-            "⭐ 3 Stars",
-            "⭐ 10 Stars"
-        ];
+<script>
+  // Список призов или значений сегментов
+  const segments = [
+    'Приз 1',
+    'Приз 2',
+    'Приз 3',
+    'Приз 4',
+    'Приз 5',
+    'Приз 6'
+  ];
 
-        spinButton.addEventListener("click", () => {
-            if (isSpinning) return;
-            isSpinning = true;
+  const wheel = document.getElementById('wheel');
+  const spinButton = document.getElementById('spinButton');
+  const numSegments = segments.length;
+  const segmentAngle = 360 / numSegments;
 
-            const randomDegree = Math.floor(Math.random() * 360) + 3600; // Random degree + multiple full spins
-            const prizeIndex = Math.floor(((360 - (randomDegree % 360)) / 45) % prizes.length); // Calculate prize index
+  // Функция для создания сегментов колеса
+  function createWheel() {
+    segments.forEach((text, index) => {
+      const segment = document.createElement('div');
+      segment.classList.add('segment');
+      // Устанавливаем угол поворота сегмента
+      segment.style.transform = `rotate(${index * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
+      // Чередование цветов
+      segment.style.background = index % 2 === 0 ? '#FF4500' : '#FFD700';
+      segment.style.width = '200%';
+      segment.style.height = '200%';
 
-            wheel.style.transform = `rotate(${randomDegree}deg)`;
+      // Добавление текста в сегмент
+      const span = document.createElement('span');
+      span.textContent = text;
+      // Поворачиваем текст для корректного отображения
+      span.style.transform = `rotate(${segmentAngle/2}deg)`;
+      segment.appendChild(span);
 
-            setTimeout(() => {
-                isSpinning = false;
-                result.textContent = `You won ${prizes[prizeIndex]}! 🎉`;
-            }, 5000); // Wait for the spin animation to complete
-        });
-    </script>
+      wheel.appendChild(segment);
+    });
+  }
+
+  // Запускаем генерацию колеса
+  createWheel();
+
+  spinButton.addEventListener('click', () => {
+    // Вычисляем случайный угол для вращения (минимум 3 полных оборота)
+    const randomAngle = Math.floor(Math.random() * 360) + (360 * 3);
+    
+    // Применяем анимацию вращения
+    wheel.style.transition = 'transform 5s ease-out';
+    wheel.style.transform = `rotate(${randomAngle}deg)`;
+
+    // После завершения анимации сбрасываем эффект перехода
+    wheel.addEventListener('transitionend', () => {
+      const actualAngle = randomAngle % 360;
+      wheel.style.transition = 'none';
+      wheel.style.transform = `rotate(${actualAngle}deg)`;
+    }, { once: true });
+  });
+</script>
 </body>
 </html>
