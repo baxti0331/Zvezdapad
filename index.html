@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Колесо Фортуны - Звезды</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    background: #222;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    user-select: none;
+  }
+  h1 {
+    margin-bottom: 0.2em;
+  }
+  #balance, #spins {
+    font-size: 1.2em;
+    margin: 0.2em 0;
+  }
+  #wheel-container {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    margin: 20px 0;
+  }
+  #wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #f7b500;
+    box-shadow: 0 0 20px #f7b500;
+    position: relative;
+    overflow: hidden;
+    transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
+    background: #222;
+  }
+  .segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    border-right: 2px solid #333;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 10px;
+    box-sizing: border-box;
+    font-weight: bold;
+    color: #222;
+    text-shadow: 1px 1px 2px #fff;
+  }
+  .label {
+    transform-origin: center;
+    transform: skewY(70deg) rotate(15deg);
+    pointer-events: none;
+  }
+  #pointer {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3em;
+    color: #f7b500;
+    text-shadow: 0 0 5px #f7b500;
+    pointer-events: none;
+    user-select: none;
+  }
+  button {
+    margin: 10px;
+    padding: 15px 25px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #f9d71c, #f7b500);
+    color: #222;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px #f7b500;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  button:hover:not(:disabled) {
+    background: linear-gradient(45deg, #fff85f, #f9d71c);
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 1.4em;
+    color: #ffeb3b;
+    text-shadow: 0 0 5px #f7b500;
+    font-weight: bold;
+    min-height: 1.5em;
+  }
+</style>
+</head>
+<body>
+  <h1>Колесо Фортуны</h1>
+  <div id="balance">Баланс звёзд: <strong>0.00</strong></div>
+  <div id="spins">Вращения: 0</div>
+  <div id="wheel-container">
+    <div id="pointer">▼</div>
+    <div id="wheel"></div>
+  </div>
+  <button id="spin-btn" disabled>Вращать колесо</button>
+  <button id="task-btn">Открыть задание (+5 вращений)</button>
+  <div id="result"></div>
+
+<script>
+  const segments = [
+    { label: '⭐️ 0.5', value: 0.5, color: '#f9d71c' },
+    { label: '⭐️ 1', value: 1, color: '#f7b500' },
+    { label: '⭐️ 0.7', value: 0.7, color: '#f9d71c' },
+    { label: 'Mystery Box 5', value: 'mystery5', color: '#ff6f61' },
+    { label: '⭐️ 2', value: 2, color: '#f7b500' },
+    { label: '⭐️ 0.2', value: 0.2, color: '#f9d71c' },
+    { label: 'Mystery Box 3', value: 'mystery3', color: '#ff6f61' },
+    { label: '⭐️ 0.07', value: 0.07, color: '#f7b500' },
+    { label: '⭐️ 5', value: 5, color: '#f9d71c' },
+    { label: 'Mystery Box 2', value: 'mystery2', color: '#ff6f61' },
+  ];
+
+  const segmentCount = segments.length;
+  const segmentAngle = 360 / segmentCount;
+  const wheel = document.getElementById('wheel');
+  const balanceEl = document.querySelector('#balance strong');
+  const spinsEl = document.getElementById('spins');
+  const spinBtn = document.getElementById('spin-btn');
+  const taskBtn = document.getElementById('task-btn');
+  const resultEl = document.getElementById('result');
+
+  let stars = 0;
+  let spins = 0;
+  let isSpinning = false;
+  let currentRotation = 0;
+
+  // Создаём сегменты колеса
+  segments.forEach((seg, i) => {
+    const segEl = document.createElement('div');
+    segEl.className = 'segment';
+    segEl.style.backgroundColor = seg.color;
+    segEl.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = seg.label;
+
+    segEl.appendChild(label);
+    wheel.appendChild(segEl);
+  });
+
+  function updateUI() {
+    balanceEl.textContent = stars.toFixed(2);
+    spinsEl.textContent = `Вращения: ${spins}`;
+    spinBtn.disabled = spins <= 0 || isSpinning;
+  }
+
+  function openTask() {
+    if (isSpinning) return;
+    spins += 5;
+    resultEl.textContent = '';
+    updateUI();
+  }
+
+  function spinWheel() {
+    if (spins <= 0 || isSpinning) return;
+    isSpinning = true;
+    spins--;
+    resultEl.textContent = '';
+    updateUI();
+
+    // Выбор призового сегмента с вероятностями (меньшие призы чаще)
+    const weights = segments.map(s => {
+      if (typeof s.value === 'number') return 1 / (s.value + 0.1);
+      if (s.value.toString().startsWith('mystery')) return 0.5;
+      return 1;
+    });
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+    let rnd = Math.random() * totalWeight;
+    let chosenIndex = 0;
+    for (let i = 0; i < weights.length; i++) {
+      if (rnd < weights[i]) {
+        chosenIndex = i;
+        break;
+      }
+      rnd -= weights[i];
+    }
+
+    const baseRotations = 5;
+    const randomOffset = Math.random() * segmentAngle;
+    const finalAngle = 360 * baseRotations - (chosenIndex * segmentAngle) - (segmentAngle / 2) + randomOffset;
+
+    currentRotation = (currentRotation + finalAngle) % 360;
+
+    wheel.style.transition = 'transform 5s cubic-bezier(0.33, 1, 0.68, 1)';
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+    setTimeout(() => {
+      isSpinning = false;
+      const prize = segments[chosenIndex];
+      let wonStars = 0;
+      if (typeof prize.value === 'number') {
+        wonStars = prize.value;
+        stars += wonStars;
+        resultEl.textContent = `Поздравляем! Вы выиграли ${prize.label} звёзд.`;
+      } else if (prize.value.toString().startsWith('mystery')) {
+        if (prize.value === 'mystery5') wonStars = 5;
+        else if (prize.value === 'mystery3') wonStars = 3;
+        else if (prize.value === 'mystery2') wonStars = 2;
+        stars += wonStars;
+        resultEl.textContent = `Вы получили Mystery Box с ${wonStars} звёздами!`;
+      }
+      updateUI();
+      wheel.style.transition = 'none';
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+    }, 5200);
+  }
+
+  spinBtn.addEventListener('click', spinWheel);
+  taskBtn.addEventListener('click', openTask);
+
+  updateUI();
+</script>
+</body>
+</html>
