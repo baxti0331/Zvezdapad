@@ -3,44 +3,55 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Колесо Фортуны - Звезды</title>
+<title>Колесо Фортуны ⭐️</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
   body {
-    margin: 0; padding: 0;
-    background: #222;
+    margin: 0;
+    background: linear-gradient(135deg, #1e1e1e, #111);
     color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    overflow: hidden;
     user-select: none;
   }
   h1 {
     margin-bottom: 0.2em;
+    color: #f7b500;
+    text-shadow: 0 0 8px #f7b500;
   }
   #balance, #spins {
-    font-size: 1.2em;
-    margin: 0.2em 0;
+    font-size: 1.3em;
+    margin: 0.3em 0;
+    font-weight: 600;
+    color: #ffd843;
+    text-shadow: 0 0 5px #f7b500;
   }
   #wheel-container {
     position: relative;
-    width: 350px;
-    height: 350px;
-    margin: 20px 0;
+    width: 400px;
+    height: 400px;
+    perspective: 1200px;
+    margin: 30px 0;
   }
   #wheel {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 8px solid #f7b500;
-    box-shadow: 0 0 20px #f7b500;
+    background: radial-gradient(circle at center, #f9d71c 0%, #cda200 80%);
+    box-shadow:
+      inset 0 0 20px #fff200,
+      0 10px 30px rgba(255, 183, 0, 0.9);
     position: relative;
-    overflow: hidden;
+    transform-style: preserve-3d;
     transition: transform 5s cubic-bezier(0.33, 1, 0.68, 1);
-    background: #222;
+    border: 6px solid #e5b600;
   }
+  /* Сегменты */
   .segment {
     position: absolute;
     width: 50%;
@@ -48,93 +59,107 @@
     top: 50%;
     left: 50%;
     transform-origin: 0% 0%;
-    border-right: 2px solid #333;
     overflow: visible;
+    border-right: 2px solid #a57f00;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 10px;
+    padding-left: 12px;
     box-sizing: border-box;
-    font-weight: bold;
-    color: #222;
-    text-shadow: 1px 1px 2px #fff;
+    color: #3a2700;
+    font-weight: 700;
+    text-shadow: 0 0 3px #fff7a5;
+    font-size: 1.2em;
   }
-  .label {
-    transform-origin: center;
-    transform: skewY(70deg) rotate(15deg);
-    pointer-events: none;
+  .segment .icon {
+    margin-right: 6px;
+    font-size: 1.5em;
+    filter: drop-shadow(0 0 3px #ffec52);
   }
+  /* Стрелка */
   #pointer {
     position: absolute;
-    top: -20px;
+    top: -35px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 3em;
-    color: #f7b500;
-    text-shadow: 0 0 5px #f7b500;
-    pointer-events: none;
+    font-size: 4em;
+    color: #ffd843;
+    text-shadow: 0 0 12px #f7b500;
     user-select: none;
+    pointer-events: none;
+    z-index: 10;
   }
+  /* Кнопки */
   button {
-    margin: 10px;
-    padding: 15px 25px;
-    font-size: 1.1em;
+    background: linear-gradient(45deg, #f9d71c, #cda200);
     border: none;
-    border-radius: 30px;
-    background: linear-gradient(45deg, #f9d71c, #f7b500);
-    color: #222;
-    font-weight: bold;
+    border-radius: 35px;
+    padding: 15px 35px;
+    font-weight: 700;
+    font-size: 1.2em;
+    margin: 12px;
     cursor: pointer;
-    box-shadow: 0 0 10px #f7b500;
+    box-shadow: 0 0 20px #f7b500;
+    color: #3a2700;
     transition: background 0.3s ease;
     user-select: none;
   }
   button:disabled {
     background: #555;
+    color: #aaa;
     cursor: not-allowed;
     box-shadow: none;
   }
   button:hover:not(:disabled) {
-    background: linear-gradient(45deg, #fff85f, #f9d71c);
+    background: linear-gradient(45deg, #fff859, #f9d71c);
   }
   #result {
     margin-top: 20px;
     font-size: 1.4em;
+    font-weight: 700;
     color: #ffeb3b;
-    text-shadow: 0 0 5px #f7b500;
-    font-weight: bold;
-    min-height: 1.5em;
+    text-shadow: 0 0 8px #f7b500;
+    min-height: 1.7em;
+    user-select: text;
+    max-width: 350px;
+    text-align: center;
   }
 </style>
 </head>
 <body>
-  <h1>Колесо Фортуны</h1>
-  <div id="balance">Баланс звёзд: <strong>0.00</strong></div>
-  <div id="spins">Вращения: 0</div>
-  <div id="wheel-container">
-    <div id="pointer">▼</div>
-    <div id="wheel"></div>
-  </div>
-  <button id="spin-btn" disabled>Вращать колесо</button>
-  <button id="task-btn">Открыть задание (+5 вращений)</button>
-  <div id="result"></div>
+
+<h1>Колесо Фортуны ⭐️</h1>
+<div id="balance">Баланс звёзд: <strong>0.00</strong></div>
+<div id="spins">Вращения: 0</div>
+
+<div id="wheel-container">
+  <div id="pointer">▼</div>
+  <div id="wheel"></div>
+</div>
+
+<button id="spin-btn" disabled>Вращать колесо</button>
+<button id="task-btn">Открыть задание (+5 вращений)</button>
+
+<div id="result"></div>
 
 <script>
+  // Призы и их вероятности и цвета
   const segments = [
-    { label: '⭐️ 0.5', value: 0.5, color: '#f9d71c' },
-    { label: '⭐️ 1', value: 1, color: '#f7b500' },
-    { label: '⭐️ 0.7', value: 0.7, color: '#f9d71c' },
-    { label: 'Mystery Box 5', value: 'mystery5', color: '#ff6f61' },
-    { label: '⭐️ 2', value: 2, color: '#f7b500' },
-    { label: '⭐️ 0.2', value: 0.2, color: '#f9d71c' },
-    { label: 'Mystery Box 3', value: 'mystery3', color: '#ff6f61' },
-    { label: '⭐️ 0.07', value: 0.07, color: '#f7b500' },
-    { label: '⭐️ 5', value: 5, color: '#f9d71c' },
-    { label: 'Mystery Box 2', value: 'mystery2', color: '#ff6f61' },
+    { label: '⭐️ 0.5', value: 0.5, color: '#f9d71c', icon: '⭐️' },
+    { label: '⭐️ 1', value: 1, color: '#f7b500', icon: '⭐️' },
+    { label: '⭐️ 0.7', value: 0.7, color: '#f9d71c', icon: '⭐️' },
+    { label: 'Mystery Box 5', value: 'mystery5', color: '#ff6f61', icon: '🎁' },
+    { label: '⭐️ 2', value: 2, color: '#f7b500', icon: '⭐️' },
+    { label: '⭐️ 0.2', value: 0.2, color: '#f9d71c', icon: '⭐️' },
+    { label: 'Mystery Box 3', value: 'mystery3', color: '#ff6f61', icon: '🎁' },
+    { label: '⭐️ 0.07', value: 0.07, color: '#f7b500', icon: '⭐️' },
+    { label: '⭐️ 5', value: 5, color: '#f9d71c', icon: '⭐️' },
+    { label: 'Mystery Box 2', value: 'mystery2', color: '#ff6f61', icon: '🎁' },
   ];
 
   const segmentCount = segments.length;
   const segmentAngle = 360 / segmentCount;
+
   const wheel = document.getElementById('wheel');
   const balanceEl = document.querySelector('#balance strong');
   const spinsEl = document.getElementById('spins');
@@ -147,18 +172,23 @@
   let isSpinning = false;
   let currentRotation = 0;
 
-  // Создаём сегменты колеса
+  // Создание сегментов колеса с 3D-эффектом
   segments.forEach((seg, i) => {
     const segEl = document.createElement('div');
     segEl.className = 'segment';
     segEl.style.backgroundColor = seg.color;
     segEl.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
 
-    const label = document.createElement('span');
-    label.className = 'label';
-    label.textContent = seg.label;
+    // Создаем иконку + текст
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'icon';
+    iconSpan.textContent = seg.icon;
 
-    segEl.appendChild(label);
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = ` ${seg.label}`;
+
+    segEl.appendChild(iconSpan);
+    segEl.appendChild(labelSpan);
     wheel.appendChild(segEl);
   });
 
@@ -182,12 +212,18 @@
     resultEl.textContent = '';
     updateUI();
 
-    // Выбор призового сегмента с вероятностями (меньшие призы чаще)
+    // Выбор призового сегмента с весами вероятности
     const weights = segments.map(s => {
-      if (typeof s.value === 'number') return 1 / (s.value + 0.1);
-      if (s.value.toString().startsWith('mystery')) return 0.5;
+      if (typeof s.value === 'number') {
+        // Чем больше значение - тем меньше вероятность
+        return 1 / (s.value + 0.1);
+      }
+      if (s.value.toString().startsWith('mystery')) {
+        return 0.5; // Mystery box средняя вероятность
+      }
       return 1;
     });
+
     const totalWeight = weights.reduce((a, b) => a + b, 0);
     let rnd = Math.random() * totalWeight;
     let chosenIndex = 0;
@@ -199,7 +235,8 @@
       rnd -= weights[i];
     }
 
-    const baseRotations = 5;
+    // Крутим колесо
+    const baseRotations = 6; // количество полных оборотов
     const randomOffset = Math.random() * segmentAngle;
     const finalAngle = 360 * baseRotations - (chosenIndex * segmentAngle) - (segmentAngle / 2) + randomOffset;
 
@@ -215,13 +252,13 @@
       if (typeof prize.value === 'number') {
         wonStars = prize.value;
         stars += wonStars;
-        resultEl.textContent = `Поздравляем! Вы выиграли ${prize.label} звёзд.`;
+        resultEl.textContent = `🎉 Поздравляем! Вы выиграли ${prize.label} звёзд!`;
       } else if (prize.value.toString().startsWith('mystery')) {
         if (prize.value === 'mystery5') wonStars = 5;
         else if (prize.value === 'mystery3') wonStars = 3;
         else if (prize.value === 'mystery2') wonStars = 2;
         stars += wonStars;
-        resultEl.textContent = `Вы получили Mystery Box с ${wonStars} звёздами!`;
+        resultEl.textContent = `🎁 Вы получили Mystery Box с ${wonStars} звёздами!`;
       }
       updateUI();
       wheel.style.transition = 'none';
@@ -234,5 +271,6 @@
 
   updateUI();
 </script>
+
 </body>
 </html>
