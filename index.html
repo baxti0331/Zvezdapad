@@ -3,206 +3,221 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Открытие Telegram Звезды ⭐️</title>
+  <title>Кейс Telegram Звёзд ⭐️</title>
   <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      margin: 0;
-      height: 100vh;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       background: linear-gradient(135deg, #1f1c2c, #928dab);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
+      font-family:'Segoe UI', sans-serif;
+      overflow:hidden;
     }
-
     .container {
-      text-align: center;
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align:center;
+      background:#1f1f1f;
+      padding:30px;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.5);
     }
-
     button {
-      padding: 12px 24px;
-      background: #ffb300;
-      color: #1c1c1c;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 20px rgba(255, 179, 0, 0.5);
+      padding:12px 24px;
+      background:#ffd700;
+      color:#1f1c1c;
+      font-weight:bold;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+      transition: background .3s;
     }
-
-    button:hover {
-      background: #ffc107;
-    }
-
+    button:hover { background:#ffea00; }
     .scroller-container {
-      position: relative;
-      width: 320px;
-      height: 110px;
-      margin: 30px auto;
-      overflow: hidden;
-      border: 4px solid gold;
-      border-radius: 12px;
-      background: #101010;
+      position:relative;
+      width:360px;
+      height:120px;
+      margin:20px auto;
+      overflow:hidden;
+      border:3px solid gold;
+      border-radius:12px;
+      background:#101010;
     }
-
     .scroller {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      will-change: transform;
+      display:flex;
+      align-items:center;
+      height:100%;
+      position:absolute;
+      top:0; left:0;
+      will-change:transform;
     }
-
     .star-item {
-      width: 90px;
-      height: 90px;
-      margin: 0 10px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: white;
-      transition: transform 0.2s ease;
-      box-shadow: 0 0 6px rgba(255,255,255,0.1);
+      width:100px;
+      height:100px;
+      margin:0 8px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.2rem;
+      font-weight:bold;
+      color:white;
+      position:relative;
     }
-
-    .common {
-      background: linear-gradient(145deg, #4e4e4e, #2e2e2e);
-    }
-
-    .rare {
-      background: linear-gradient(145deg, #2196f3, #1976d2);
-    }
-
-    .epic {
-      background: linear-gradient(145deg, #9c27b0, #7b1fa2);
-    }
-
+    .common { background: #4e4e4e; }
+    .rare { background: #2196f3; }
+    .epic { background: #9c27b0; }
     .legendary {
-      background: linear-gradient(145deg, #ffeb3b, #fbc02d);
+      background: #ffd700;
       color: #1c1c1c;
-      box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
     }
-
     .highlight {
       animation: pulse 0.6s ease-in-out infinite alternate;
-      transform: scale(1.2);
-      z-index: 10;
+      transform: scale(1.3);
+      z-index:10;
     }
-
     @keyframes pulse {
-      from {
-        box-shadow: 0 0 5px gold;
-      }
-      to {
-        box-shadow: 0 0 25px gold;
-      }
+      to { box-shadow: 0 0 30px gold; }
     }
-
+    .particle {
+      position:absolute;
+      width:8px; height:8px;
+      background:radial-gradient(circle, gold, transparent);
+      border-radius:50%;
+      pointer-events:none;
+      animation: fly 0.8s linear forwards;
+    }
+    @keyframes fly {
+      to { transform: translate(var(--dx), var(--dy)) scale(0); opacity:0; }
+    }
+    .flash {
+      position:absolute;
+      width:200px; height:200px;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(255,255,200,0.5), transparent);
+      top:50%; left:50%;
+      transform: translate(-50%,-50%) scale(0);
+      animation: flashAnim 0.5s ease-out forwards;
+      pointer-events:none;
+    }
+    @keyframes flashAnim {
+      to { transform: translate(-50%,-50%) scale(1); opacity:0; }
+    }
     .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: white;
-      border: 3px solid gold;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-      text-align: center;
-      animation: popupShow 0.4s ease forwards;
+      position:fixed;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%) scale(0);
+      background:white;
+      border:3px solid gold;
+      padding:30px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 8px 30px rgba(0,0,0,0.5);
+      animation:popupShow .4s ease forwards;
     }
-
     @keyframes popupShow {
-      to {
-        transform: translate(-50%, -50%) scale(1);
-      }
+      to { transform:translate(-50%,-50%) scale(1); }
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <button id="rollBtn">Открыть звезды ⭐️</button>
-  <div class="scroller-container">
-    <div class="scroller" id="scroller"></div>
+  <div class="container">
+    <button id="rollBtn">Открыть звёзды ⭐️</button>
+    <div class="scroller-container">
+      <div class="scroller" id="scroller"></div>
+    </div>
   </div>
-</div>
 
-<script>
-  const rollBtn = document.getElementById("rollBtn");
-  const scroller = document.getElementById("scroller");
+  <script>
+    const rollBtn = document.getElementById("rollBtn");
+    const scroller = document.getElementById("scroller");
 
-  // Генерируем 50 вариантов звёзд от 1 до 50
-  const stars = Array.from({ length: 50 }, (_, i) => {
-    const count = i + 1;
-    let rarity = "common";
-    if (count >= 10 && count < 20) rarity = "rare";
-    else if (count >= 20 && count < 30) rarity = "epic";
-    else if (count >= 30) rarity = "legendary";
-    return { count, rarity };
-  });
+    const rarityChances = { common:79.92, rare:15.98, epic:3.2, legendary:0.9 };
+    const stars = Array.from({length:50}, (_, i) => ({
+      count: i+1,
+      rarity: i>=30 ? 'legendary' : i>=20 ? 'epic' : i>=10 ? 'rare' : 'common'
+    }));
 
-  function roll() {
-    rollBtn.disabled = true;
-    scroller.innerHTML = "";
-
-    const items = [];
-
-    // Создаём длинную ленту из случайных звёзд
-    const longList = [];
-    for (let i = 0; i < 80; i++) {
-      const s = stars[Math.floor(Math.random() * stars.length)];
-      longList.push(s);
+    function pickRarity(){
+      const r = Math.random()*100, keys = Object.keys(rarityChances);
+      let cum = 0;
+      for(let k of keys){
+        cum += rarityChances[k];
+        if(r <= cum) return k;
+      }
+      return 'common';
     }
 
-    longList.forEach((star) => {
-      const div = document.createElement("div");
-      div.className = `star-item ${star.rarity}`;
-      div.innerText = `⭐ ${star.count}`;
-      scroller.appendChild(div);
-      items.push(div);
-    });
+    function randomStar(){
+      const rar = pickRarity();
+      const pool = stars.filter(s=>s.rarity===rar);
+      return pool[Math.floor(Math.random()*pool.length)];
+    }
 
-    const itemWidth = 110;
-    const totalItems = items.length;
-    const centerIndex = Math.floor(Math.random() * (totalItems - 10)) + 5;
+    function createParticles(x,y){
+      for(let i=0;i<15;i++){
+        const div = document.createElement('div');
+        div.className='particle';
+        const ang = Math.random()*Math.PI*2;
+        const dist = 100+Math.random()*50;
+        div.style.left = x+'px'; div.style.top = y+'px';
+        div.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');
+        div.style.setProperty('--dy',(Math.sin(ang)*dist)+'px');
+        document.body.append(div);
+        setTimeout(()=>div.remove(), 900);
+      }
+    }
 
-    const targetOffset = -(centerIndex * itemWidth) + 115;
+    function createFlash(){
+      const fl = document.createElement('div');
+      fl.className = 'flash';
+      document.body.append(fl);
+      setTimeout(() => fl.remove(), 600);
+    }
 
-    scroller.style.transition = "transform 4.5s cubic-bezier(0.25, 0.1, 0.2, 1)";
-    scroller.style.transform = `translateX(${targetOffset}px)`;
+    function roll(){
+      rollBtn.disabled=true;
+      scroller.innerHTML='';
 
-    setTimeout(() => {
-      const selected = items[centerIndex];
-      selected.classList.add("highlight");
+      const items=[];
+      const longList = Array.from({length:60}, () => randomStar());
 
-      setTimeout(() => {
-        const popup = document.createElement("div");
-        popup.className = "popup";
-        popup.innerHTML = `
-          <h2>Поздравляем!</h2>
-          <p>Вы получили <strong>${selected.innerText}</strong></p>
-        `;
-        document.body.appendChild(popup);
-        rollBtn.disabled = false;
-      }, 700);
-    }, 4700);
-  }
+      longList.forEach(s=>{
+        const div = document.createElement('div');
+        div.className=`star-item ${s.rarity}`;
+        div.innerText = `⭐ ${s.count}`;
+        scroller.append(div);
+        items.push(div);
+      });
 
-  rollBtn.addEventListener("click", roll);
-</script>
+      const itemW = 116, total=items.length;
+      const centerIdx = Math.floor(Math.random()*(total-6))+3;
+      const target = -(centerIdx*itemW)+(scroller.parentElement.clientWidth/2 - itemW/2);
 
+      scroller.style.transition = "transform 4s cubic-bezier(.25,.1,.25,1)";
+      scroller.style.transform = `translateX(${target}px)`;
+
+      setTimeout(()=>{
+        const sel = items[centerIdx];
+        const rect = sel.getBoundingClientRect();
+        sel.classList.add('highlight');
+        createParticles(rect.left+rect.width/2, rect.top+rect.height/2);
+        if(sel.classList.contains('legendary')) createFlash();
+
+        setTimeout(()=>{
+          const popup = document.createElement('div');
+          popup.className = 'popup';
+          popup.innerHTML = `<h2>Поздравляем!</h2><p>Получено: <strong>${sel.innerText}</strong></p>`;
+          document.body.append(popup);
+          sel.remove();
+          rollBtn.disabled = false;
+        }, 700);
+      }, 4200);
+    }
+
+    rollBtn.addEventListener('click', roll);
+  </script>
 </body>
 </html>
