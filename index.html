@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CS:GO Case Style Gift</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Открытие Telegram Звезды ⭐️</title>
   <style>
     body {
       margin: 0;
       height: 100vh;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
       font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
     }
 
     .container {
@@ -25,62 +26,87 @@
 
     button {
       padding: 12px 24px;
-      background: #ff6f61;
-      color: white;
+      background: #ffb300;
+      color: #1c1c1c;
+      font-weight: bold;
       border: none;
       border-radius: 8px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(255, 179, 0, 0.5);
     }
 
     button:hover {
-      background: #ff3b2e;
+      background: #ffc107;
     }
 
     .scroller-container {
       position: relative;
-      width: 300px;
-      height: 100px;
+      width: 320px;
+      height: 110px;
       margin: 30px auto;
       overflow: hidden;
-      border: 4px solid #ffce00;
+      border: 4px solid gold;
       border-radius: 12px;
-      background: #f5f5f5;
+      background: #101010;
     }
 
     .scroller {
       display: flex;
       align-items: center;
-      height: 100px;
+      height: 100%;
       position: absolute;
       left: 0;
       top: 0;
       will-change: transform;
     }
 
-    .scroller img {
-      width: 80px;
-      height: 80px;
+    .star-item {
+      width: 90px;
+      height: 90px;
       margin: 0 10px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
       transition: transform 0.2s ease;
+      box-shadow: 0 0 6px rgba(255,255,255,0.1);
     }
 
-    .scroller img.highlight {
-      animation: glow 0.6s ease-in-out;
+    .common {
+      background: linear-gradient(145deg, #4e4e4e, #2e2e2e);
+    }
+
+    .rare {
+      background: linear-gradient(145deg, #2196f3, #1976d2);
+    }
+
+    .epic {
+      background: linear-gradient(145deg, #9c27b0, #7b1fa2);
+    }
+
+    .legendary {
+      background: linear-gradient(145deg, #ffeb3b, #fbc02d);
+      color: #1c1c1c;
+      box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+    }
+
+    .highlight {
+      animation: pulse 0.6s ease-in-out infinite alternate;
       transform: scale(1.2);
       z-index: 10;
     }
 
-    @keyframes glow {
-      0% {
-        box-shadow: 0 0 0px gold;
+    @keyframes pulse {
+      from {
+        box-shadow: 0 0 5px gold;
       }
-      50% {
-        box-shadow: 0 0 30px gold;
-      }
-      100% {
-        box-shadow: 0 0 0px gold;
+      to {
+        box-shadow: 0 0 25px gold;
       }
     }
 
@@ -108,25 +134,25 @@
 <body>
 
 <div class="container">
-  <button id="rollBtn">Открыть кейс 🎁</button>
+  <button id="rollBtn">Открыть звезды ⭐️</button>
   <div class="scroller-container">
     <div class="scroller" id="scroller"></div>
   </div>
 </div>
 
 <script>
-  const gifts = [
-    "https://cdn-icons-png.flaticon.com/512/7641/7641727.png",
-    "https://cdn-icons-png.flaticon.com/512/1170/1170576.png",
-    "https://cdn-icons-png.flaticon.com/512/3909/3909444.png",
-    "https://cdn-icons-png.flaticon.com/512/5280/5280501.png",
-    "https://cdn-icons-png.flaticon.com/512/1110/1110393.png",
-    "https://cdn-icons-png.flaticon.com/512/3274/3274059.png",
-    "https://cdn-icons-png.flaticon.com/512/763/763704.png",
-  ];
+  const rollBtn = document.getElementById("rollBtn");
+  const scroller = document.getElementById("scroller");
 
-  const rollBtn = document.getElementById('rollBtn');
-  const scroller = document.getElementById('scroller');
+  // Генерируем 50 вариантов звёзд от 1 до 50
+  const stars = Array.from({ length: 50 }, (_, i) => {
+    const count = i + 1;
+    let rarity = "common";
+    if (count >= 10 && count < 20) rarity = "rare";
+    else if (count >= 20 && count < 30) rarity = "epic";
+    else if (count >= 30) rarity = "legendary";
+    return { count, rarity };
+  });
 
   function roll() {
     rollBtn.disabled = true;
@@ -134,40 +160,45 @@
 
     const items = [];
 
-    // создаем длинную ленту (дублируем подарки много раз)
-    for (let i = 0; i < 50; i++) {
-      const img = document.createElement("img");
-      img.src = gifts[i % gifts.length];
-      items.push(img);
-      scroller.appendChild(img);
+    // Создаём длинную ленту из случайных звёзд
+    const longList = [];
+    for (let i = 0; i < 80; i++) {
+      const s = stars[Math.floor(Math.random() * stars.length)];
+      longList.push(s);
     }
 
-    const itemWidth = 100; // примерно (включая отступы)
+    longList.forEach((star) => {
+      const div = document.createElement("div");
+      div.className = `star-item ${star.rarity}`;
+      div.innerText = `⭐ ${star.count}`;
+      scroller.appendChild(div);
+      items.push(div);
+    });
+
+    const itemWidth = 110;
     const totalItems = items.length;
     const centerIndex = Math.floor(Math.random() * (totalItems - 10)) + 5;
 
-    const targetOffset = -(centerIndex * itemWidth) + 100;
+    const targetOffset = -(centerIndex * itemWidth) + 115;
 
-    // анимация прокрутки
-    scroller.style.transition = "transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)";
+    scroller.style.transition = "transform 4.5s cubic-bezier(0.25, 0.1, 0.2, 1)";
     scroller.style.transform = `translateX(${targetOffset}px)`;
 
     setTimeout(() => {
       const selected = items[centerIndex];
       selected.classList.add("highlight");
 
-      // показываем popup с выигрышем
       setTimeout(() => {
         const popup = document.createElement("div");
         popup.className = "popup";
         popup.innerHTML = `
-          <img src="${selected.src}" style="width:100px;height:100px;"><br>
-          <h2>Вы получили подарок!</h2>
+          <h2>Поздравляем!</h2>
+          <p>Вы получили <strong>${selected.innerText}</strong></p>
         `;
         document.body.appendChild(popup);
         rollBtn.disabled = false;
-      }, 600);
-    }, 4100);
+      }, 700);
+    }, 4700);
   }
 
   rollBtn.addEventListener("click", roll);
