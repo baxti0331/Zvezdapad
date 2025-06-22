@@ -1,118 +1,104 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Подарки Telegram Style</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CS:GO Case Style Gift</title>
   <style>
-    body, html {
+    body {
       margin: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at center, #ffe0c3, #ffb997);
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      user-select: none;
-      overflow: hidden;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      font-family: 'Segoe UI', sans-serif;
     }
 
     .container {
-      background: white;
-      padding: 40px 50px;
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
       text-align: center;
-      width: 340px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     button {
-      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      padding: 12px 24px;
+      background: #ff6f61;
       color: white;
       border: none;
-      border-radius: 40px;
-      padding: 14px 32px;
-      font-size: 1.1rem;
-      font-weight: bold;
+      border-radius: 8px;
+      font-size: 1.2rem;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 15px rgba(229, 46, 113, 0.4);
+      transition: background 0.3s ease;
     }
 
-    button:active {
-      transform: scale(0.96);
-      box-shadow: 0 4px 8px rgba(229, 46, 113, 0.3);
+    button:hover {
+      background: #ff3b2e;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .gift-scroller {
-      margin-top: 30px;
-      overflow: hidden;
-      height: 90px;
+    .scroller-container {
       position: relative;
-      border-radius: 16px;
-      background: #fff0e6;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+      width: 300px;
+      height: 100px;
+      margin: 30px auto;
+      overflow: hidden;
+      border: 4px solid #ffce00;
+      border-radius: 12px;
+      background: #f5f5f5;
     }
 
-    .gift-strip {
+    .scroller {
       display: flex;
-      gap: 25px;
       align-items: center;
-      height: 90px;
+      height: 100px;
       position: absolute;
-      white-space: nowrap;
+      left: 0;
+      top: 0;
       will-change: transform;
-      transition: transform 4s ease;
     }
 
-    .gift-strip img {
-      height: 70px;
-      width: 70px;
-      object-fit: contain;
-      transition: transform 0.3s ease;
+    .scroller img {
+      width: 80px;
+      height: 80px;
+      margin: 0 10px;
+      transition: transform 0.2s ease;
     }
 
-    .gift-strip img.selected {
-      animation: explode 0.7s ease forwards;
+    .scroller img.highlight {
+      animation: glow 0.6s ease-in-out;
+      transform: scale(1.2);
       z-index: 10;
     }
 
-    @keyframes explode {
+    @keyframes glow {
       0% {
-        transform: scale(1);
-        opacity: 1;
-        filter: drop-shadow(0 0 0px gold);
+        box-shadow: 0 0 0px gold;
       }
       50% {
-        transform: scale(1.6) rotate(20deg);
-        filter: drop-shadow(0 0 10px gold);
+        box-shadow: 0 0 30px gold;
       }
       100% {
-        transform: scale(0) rotate(720deg);
-        opacity: 0;
-        filter: drop-shadow(0 0 20px gold);
+        box-shadow: 0 0 0px gold;
       }
     }
 
     .popup {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0);
       background: white;
-      border: 2px solid gold;
-      padding: 20px;
+      border: 3px solid gold;
+      padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      animation: popIn 0.5s ease forwards;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      animation: popupShow 0.4s ease forwards;
     }
 
-    @keyframes popIn {
+    @keyframes popupShow {
       to {
         transform: translate(-50%, -50%) scale(1);
       }
@@ -122,12 +108,14 @@
 <body>
 
 <div class="container">
-  <button id="btn">Показать подарки</button>
-  <div class="gift-scroller"></div>
+  <button id="rollBtn">Открыть кейс 🎁</button>
+  <div class="scroller-container">
+    <div class="scroller" id="scroller"></div>
+  </div>
 </div>
 
 <script>
-  const giftUrls = [
+  const gifts = [
     "https://cdn-icons-png.flaticon.com/512/7641/7641727.png",
     "https://cdn-icons-png.flaticon.com/512/1170/1170576.png",
     "https://cdn-icons-png.flaticon.com/512/3909/3909444.png",
@@ -137,65 +125,52 @@
     "https://cdn-icons-png.flaticon.com/512/763/763704.png",
   ];
 
-  const btn = document.getElementById('btn');
-  const scroller = document.querySelector('.gift-scroller');
+  const rollBtn = document.getElementById('rollBtn');
+  const scroller = document.getElementById('scroller');
 
-  let animating = false;
+  function roll() {
+    rollBtn.disabled = true;
+    scroller.innerHTML = "";
 
-  function createGiftStrip() {
-    const strip = document.createElement('div');
-    strip.classList.add('gift-strip');
+    const items = [];
 
-    const gifts = giftUrls.concat(giftUrls, giftUrls); // для длинной ленты
-    gifts.forEach((url, i) => {
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = "gift";
-      strip.appendChild(img);
-    });
+    // создаем длинную ленту (дублируем подарки много раз)
+    for (let i = 0; i < 50; i++) {
+      const img = document.createElement("img");
+      img.src = gifts[i % gifts.length];
+      items.push(img);
+      scroller.appendChild(img);
+    }
 
-    return strip;
-  }
+    const itemWidth = 100; // примерно (включая отступы)
+    const totalItems = items.length;
+    const centerIndex = Math.floor(Math.random() * (totalItems - 10)) + 5;
 
-  function animateScroll() {
-    if(animating) return;
-    animating = true;
-    btn.disabled = true;
+    const targetOffset = -(centerIndex * itemWidth) + 100;
 
-    const strip = createGiftStrip();
-    scroller.innerHTML = '';
-    scroller.appendChild(strip);
+    // анимация прокрутки
+    scroller.style.transition = "transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)";
+    scroller.style.transform = `translateX(${targetOffset}px)`;
 
-    const distance = strip.offsetWidth - scroller.offsetWidth;
-    strip.style.transform = `translateX(0px)`;
-
-    // старт прокрутки
     setTimeout(() => {
-      strip.style.transform = `translateX(-${distance}px)`;
-    }, 100);
+      const selected = items[centerIndex];
+      selected.classList.add("highlight");
 
-    // после завершения анимации
-    setTimeout(() => {
-      const images = strip.querySelectorAll("img");
-      const centerIndex = Math.floor(images.length / 2);
-      const selected = images[centerIndex];
-
-      selected.classList.add('selected');
-
-      // через взрыв — показать "выигрыш"
+      // показываем popup с выигрышем
       setTimeout(() => {
-        const popup = document.createElement('div');
-        popup.className = 'popup';
-        popup.innerHTML = `<img src="${selected.src}" style="width:80px;height:80px;"><p><strong>Подарок!</strong></p>`;
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.innerHTML = `
+          <img src="${selected.src}" style="width:100px;height:100px;"><br>
+          <h2>Вы получили подарок!</h2>
+        `;
         document.body.appendChild(popup);
-
-        animating = false;
-        btn.disabled = false;
-      }, 800);
-    }, 4000); // должно совпадать с transition времени
+        rollBtn.disabled = false;
+      }, 600);
+    }, 4100);
   }
 
-  btn.addEventListener('click', animateScroll);
+  rollBtn.addEventListener("click", roll);
 </script>
 
 </body>
